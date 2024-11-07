@@ -1,17 +1,17 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_app/core/constant/constants.dart';
-import 'package:movie_app/features/home/data/models/commom_movie_model.dart';
-import 'package:movie_app/features/home/data/models/series_model.dart';
-import 'package:movie_app/features/home/presentation/bloc/home_bloc.dart';
-import 'package:movie_app/features/home/presentation/widgets/new_movie_widget.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:movie_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:movie_app/features/home/presentation/widgets/home_shimmer_widget.dart';
+import 'package:movie_app/features/home/presentation/widgets/new_movie_widget.dart';
 import 'package:movie_app/features/home/presentation/widgets/title_widget.dart';
-import '../widgets/series_movie_widget.dart';
+
+import '../../../../commom/bloc/language/language_bloc.dart';
+import '../../../../core/constant/constants.dart';
+import '../../../../route/route_name.dart';
+import '../../data/models/commom_movie_model.dart';
+import '../widgets/commom_movie_widget.dart';
 import '../widgets/single_movie_widget.dart';
-import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,14 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<HomeBloc>().add(LoadNewMovieEvent());
-    context.read<HomeBloc>().add(LoadCommomMovieEvent(10));
+    context.read<HomeBloc>().add(Init());
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final text = AppLocalizations.of(context)!;
+    final themeText = Theme.of(context).textTheme;
+    final ss = context.read<LanguageBloc>().state;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -40,19 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             if (state is HomeMovieInitial) {
-              return Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Lottie.asset(
-                      'assets/lotties/loading.json',
-                      width: 100,
-                      height: 100,
-                    ),
-                  ],
-                ),
-              );
+              return const HomeShimmerWidget();
             }
             if (state is HomeLoadSuccess) {
               return Padding(
@@ -60,14 +48,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    NewMovieWidget(
-                      items: state.listItems ?? [],
+                    const SizedBox(
+                      height: 20,
                     ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        onPressed: () => _navigateSearchScreen(),
+                        icon: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    state.listItems?.length == 0
+                        ? const SizedBox()
+                        : NewMovieWidget(
+                            items: state.listItems ?? [],
+                          ),
                     const SizedBox(
                       height: 20,
                     ),
                     TitleWidget(
                       title: text.single_movie,
+                      type: typeSingleMovie,
+                      name: text.single_movie,
                     ),
                     const SizedBox(
                       height: 20,
@@ -79,42 +84,57 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return SingleMovieWidget(
-                            items: state.listSingleMovie?[index] ??
-                                DataSingleItems(),
+                            items: state.listSingleMovie?[index] ?? DataItems(),
+                            onPress: () => _navigateDetailScreen(
+                              state.listSingleMovie?[index] ?? DataItems(),
+                            ),
                           );
                         },
                         separatorBuilder: (context, index) => const SizedBox(
-                          width: 20,
+                          width: 16,
                         ),
-                        itemCount: state.listSingleMovie?.length ?? 0,
+                        itemCount: (state.listSingleMovie?.length ?? 0) >= 7
+                            ? 10
+                            : (state.listSingleMovie?.length ?? 0),
                       ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     TitleWidget(
+                      type: typeSeriesMovie,
                       title: text.series,
+                      name: text.series,
                     ),
                     GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
-                        childAspectRatio: 0.6,
-                        crossAxisSpacing: 2.0,
-                        mainAxisSpacing: 2.0,
+                        childAspectRatio: 0.5,
+                        crossAxisSpacing: 20.0,
+                        mainAxisSpacing: 20.0,
                       ),
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: 9,
+                      itemCount: (state.listSeriesMovie?.length ?? 0) >= 9
+                          ? 9
+                          : (state.listSeriesMovie?.length ?? 0),
                       itemBuilder: (context, index) {
-                        return SeriesMovieWidget(
-                          items: state.listSeriesMovie?[index] ??
-                              DataSeriesItems(),
+                        return CommomMovieWidget(
+                          items: state.listSeriesMovie?[index] ?? DataItems(),
+                          onPress: () => _navigateDetailScreen(
+                            state.listSeriesMovie?[index] ?? DataItems(),
+                          ),
                         );
                       },
                     ),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     TitleWidget(
+                      type: typeCartoonMovie,
                       title: text.cartoon,
+                      name: text.cartoon,
                     ),
                     const SizedBox(
                       height: 20,
@@ -126,14 +146,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return SingleMovieWidget(
-                            items: state.listCartoon?[index] ??
-                                DataSingleItems(),
+                            items: state.listCartoon?[index] ?? DataItems(),
+                            onPress: () => _navigateDetailScreen(
+                              state.listCartoon?[index] ?? DataItems(),
+                            ),
                           );
                         },
                         separatorBuilder: (context, index) => const SizedBox(
-                          width: 20,
+                          width: 16,
                         ),
-                        itemCount: state.listCartoon?.length ?? 0,
+                        itemCount: (state.listCartoon?.length ?? 0) >= 7
+                            ? 10
+                            : (state.listCartoon?.length ?? 0),
                       ),
                     ),
                   ],
@@ -149,6 +173,19 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
+    );
+  }
+
+  _navigateDetailScreen(DataItems items) {
+    Navigator.of(context).pushNamed(
+      RouteName.detail,
+      arguments: items.slug,
+    );
+  }
+
+  _navigateSearchScreen() {
+    Navigator.of(context).pushNamed(
+      RouteName.search,
     );
   }
 }

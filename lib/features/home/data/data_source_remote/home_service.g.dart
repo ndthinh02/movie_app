@@ -44,9 +44,15 @@ class _HomeService implements HomeService {
   }
 
   @override
-  Future<CommomMovieModel> getSingleMovie(limit) async {
+  Future<CommomMovieModel> getSingleMovie(
+    limit,
+    page,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'page': page,
+    };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
@@ -67,13 +73,19 @@ class _HomeService implements HomeService {
   }
 
   @override
-  Future<SeriesModel> getSeriesMovie(limit) async {
+  Future<CommomMovieModel> getSeriesMovie(
+    limit,
+    page,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'page': page,
+    };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<SeriesEntity>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<CommomMovieModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -85,14 +97,20 @@ class _HomeService implements HomeService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = SeriesModel.fromJson(_result.data!);
+    final value = CommomMovieModel.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<CommomMovieModel> getCartoon(limit) async {
+  Future<CommomMovieModel> getCartoon(
+    limit,
+    page,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'page': page,
+    };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
@@ -113,9 +131,15 @@ class _HomeService implements HomeService {
   }
 
   @override
-  Future<CommomMovieModel> getTvShow(limit) async {
+  Future<CommomMovieModel> getTvShow(
+    limit,
+    page,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'limit': limit};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'page': page,
+    };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio

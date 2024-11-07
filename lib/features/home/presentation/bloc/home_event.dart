@@ -5,10 +5,12 @@ sealed class HomeEvent {}
 
 class LoadNewMovieEvent extends HomeEvent {}
 
-class LoadCommomMovieEvent extends HomeEvent {
+class Init extends HomeEvent {}
+
+class LoadSingleMovieEvent extends HomeEvent {
   final int? limit;
 
-  LoadCommomMovieEvent(
+  LoadSingleMovieEvent(
     this.limit,
   );
 }
@@ -17,12 +19,6 @@ class LoadSeriesMovieEvent extends HomeEvent {
   final int? limit;
 
   LoadSeriesMovieEvent(this.limit);
-}
-
-class LoadSingleMovieEvent extends HomeEvent {
-  final int? limit;
-
-  LoadSingleMovieEvent(this.limit);
 }
 
 class LoadCartoonEvent extends HomeEvent {

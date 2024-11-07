@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:movie_app/commom/widgets/indicator.dart';
+import 'package:movie_app/core/constant/constants.dart';
 
 class AppCacheImage extends StatelessWidget {
   const AppCacheImage({
@@ -27,6 +30,8 @@ class AppCacheImage extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: imageUrl,
           fit: boxFit,
+          errorWidget: (context, url, error) => Image.network(defaultImg),
+          placeholder: (context, url) => const IndicatorCommom(),
         ),
       ),
     );

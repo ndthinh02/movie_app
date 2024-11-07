@@ -6,4 +6,5 @@ class AppColors {
   static Color colorGreen = const Color(0xff32A877);
   static Color colorGreenText = const Color(0xff32A873);
   static Color colorBlueText = const Color(0xff95ACFF);
+  static const Color primaryBackgroundHome = Color.fromRGBO(235, 238, 241, 1);
 }

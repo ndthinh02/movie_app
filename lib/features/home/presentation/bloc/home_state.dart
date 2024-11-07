@@ -7,9 +7,9 @@ final class HomeMovieInitial extends HomeState {}
 
 final class HomeLoadSuccess extends HomeState {
   final List<Items>? listItems;
-  final List<DataSingleItems>? listSingleMovie;
-  final List<DataSeriesItems>? listSeriesMovie;
-  final List<DataSingleItems>? listCartoon;
+  final List<DataItems>? listSingleMovie;
+  final List<DataItems>? listSeriesMovie;
+  final List<DataItems>? listCartoon;
 
   HomeLoadSuccess({
     this.listItems,

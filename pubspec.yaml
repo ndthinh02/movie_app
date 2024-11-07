@@ -51,6 +51,26 @@ dependencies:
   flutter_dotenv:
   equatable:
   lottie: ^2.4.0
+  infinite_scroll_pagination:
+  loading_indicator:
+  flick_video_player:
+  better_player: any
+  logger:
+  animated_read_more_text:
+  firebase_auth:
+  firebase_core:
+  cloud_firestore:
+  google_sign_in: ^6.2.1
+  flutter_facebook_auth:
+  firebase_storage:
+  event_bus:
+  image_picker:
+  firebase_app_check:
+  shared_preferences:
+  shimmer:
+  flutter_downloader:
+  flutter_file_downloader: ^2.0.0
+
 
 
 dev_dependencies:

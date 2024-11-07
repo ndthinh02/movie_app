@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:movie_app/commom/widgets/button.dart';
 import 'package:movie_app/config/colors/app_colors.dart';
 import 'package:movie_app/core/app_image.dart';
-import 'package:flutter_gen/gen_l10n/app_localization.dart';
-import 'package:movie_app/features/signup/presentation/page/signup_screen.dart';
 
-import '../../login/presentation/page/login_screen.dart';
+import '../../../../route/route_name.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -88,26 +86,10 @@ class LandingPage extends StatelessWidget {
   }
 
   _navigateSignupScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const SignUpScreen(),
-        transitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder: (_, a, __, c) =>
-            FadeTransition(opacity: a, child: c),
-      ),
-    );
+    Navigator.pushNamed(context, RouteName.signup);
   }
 
   _navigateLoginScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const LoginScreen(),
-        transitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder: (_, a, __, c) =>
-            FadeTransition(opacity: a, child: c),
-      ),
-    );
+    Navigator.pushNamed(context, RouteName.login);
   }
 }

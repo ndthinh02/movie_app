@@ -15,11 +15,15 @@ class AppTextFiled extends StatefulWidget {
     this.prefixIcon,
     this.colorEnabledBorder,
     this.suffixIconTapped,
+    this.validator,
+    this.errorText,
+    this.isShowPass,
   });
 
   final double? height;
   final double? radius;
   final String? labelText;
+  final String? errorText;
   final Color? colorBorderSide;
   final TextEditingController controller;
   final Color? colorTextEnabledBorder;
@@ -27,6 +31,8 @@ class AppTextFiled extends StatefulWidget {
   final IconData? suffixIconTapped;
   final IconData? prefixIcon;
   final Color? colorEnabledBorder;
+  final Function(String? value)? validator;
+  final bool? isShowPass;
 
   @override
   State<AppTextFiled> createState() => _AppTextFiledState();
@@ -41,8 +47,9 @@ class _AppTextFiledState extends State<AppTextFiled> {
         widget.controller.text == "" ? Colors.white : AppColors.colorGreen;
     return SizedBox(
       height: widget.height ?? 54,
-      child: TextField(
-        obscureText: obscureText,
+      child: TextFormField(
+        validator: (value) => widget.validator!(value),
+        obscureText: (widget.isShowPass ?? false) ==true  ?!obscureText : false,
         controller: widget.controller,
         cursorColor: AppColors.colorGreen,
         style: TextStyle(
@@ -74,6 +81,7 @@ class _AppTextFiledState extends State<AppTextFiled> {
             widget.prefixIcon,
             color: color,
           ),
+          // errorText: widget.errorText??'',
           labelText: widget.labelText ?? '',
           labelStyle: TextStyle(
             color: color,
@@ -93,6 +101,11 @@ class _AppTextFiledState extends State<AppTextFiled> {
               color: color,
             ),
           ),
+          errorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red
+            )
+          )
         ),
       ),
     );

@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:movie_app/features/home/data/data_source_remote/home_service.dart';
 import 'package:movie_app/features/home/domain/entities/commom_movie_entity.dart';
 import 'package:movie_app/features/home/domain/entities/new_movies.dart';
-import 'package:movie_app/features/home/domain/entities/series_entity.dart';
 import 'package:movie_app/features/home/domain/repositories/home_repo.dart';
 
 class HomeImpl implements HomeRepo {
@@ -26,10 +25,12 @@ class HomeImpl implements HomeRepo {
   @override
   Future<Either<Exception, CommomMovieEntity>> getSingleMovie(
     int? limit,
+    int? page,
   ) async {
     try {
       final result = await _service.getSingleMovie(
         limit ?? 10,
+        page ?? 1,
       );
       return right(result);
     } on DioError catch (e) {
@@ -37,14 +38,15 @@ class HomeImpl implements HomeRepo {
     }
   }
 
-
   @override
-  Future<Either<Exception, SeriesEntity>> getSeriesMovie(
+  Future<Either<Exception, CommomMovieEntity>> getSeriesMovie(
     int? limit,
+    int? page,
   ) async {
     try {
       final result = await _service.getSeriesMovie(
         limit ?? 10,
+        page ?? 1,
       );
       return right(result);
     } on DioError catch (e) {
@@ -55,10 +57,12 @@ class HomeImpl implements HomeRepo {
   @override
   Future<Either<Exception, CommomMovieEntity>> getCartoon(
     int? limit,
+    int? page,
   ) async {
     try {
       final result = await _service.getCartoon(
         limit ?? 10,
+        page ?? 1,
       );
       return right(result);
     } on DioError catch (e) {
@@ -69,10 +73,12 @@ class HomeImpl implements HomeRepo {
   @override
   Future<Either<Exception, CommomMovieEntity>> getTvShows(
     int? limit,
+    int? page,
   ) async {
     try {
       final result = await _service.getTvShow(
         limit ?? 10,
+        page ?? 1,
       );
       return right(result);
     } on DioError catch (e) {

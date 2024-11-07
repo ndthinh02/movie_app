@@ -1,14 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:meta/meta.dart';
-import 'package:movie_app/features/home/data/models/series_model.dart';
 
 import '../../data/models/commom_movie_model.dart';
 import '../../data/models/new_movie_model.dart';
 import '../../domain/usecase/home_usecase.dart';
 
 part 'home_event.dart';
-
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -18,8 +17,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadNewMovieEvent>(
       (event, emit) => _onLoadNewMovieEvent(event, emit),
     );
-    on<LoadCommomMovieEvent>(
-      (event, emit) => _onLoadCommomMovieEvent(event, emit),
+    on<LoadSingleMovieEvent>(
+      (event, emit) => _onLoadSingleMovieEvent(event, emit),
     );
     on<LoadSeriesMovieEvent>(
       (event, emit) => _onLoadSeriesMovieEvent(event, emit),
@@ -30,12 +29,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadTvShowsEvent>(
       (event, emit) => _onLoadTvShowsEvent(event, emit),
     );
+    on<Init>(
+      (event, emit) => _onInit(event, emit),
+    );
   }
 
   List<Items> _listNewMovie = [];
-  List<DataSingleItems> _listSingle = [];
-  List<DataSingleItems> _listCarton = [];
-  List<DataSeriesItems> _listSeries = [];
+  List<DataItems> listSingle = [];
+  List<DataItems> _listCarton = [];
+  List<DataItems> _listSeries = [];
+  int _page = -1;
+  final PagingController<int, DataItems> controller = PagingController(
+    firstPageKey: 0,
+  );
+
+  _onInit(Init event, Emitter emit) {
+    add(LoadNewMovieEvent());
+    add(LoadSingleMovieEvent(10));
+    add(LoadCartoonEvent(10));
+    add(LoadSeriesMovieEvent(10));
+  }
 
   _onLoadNewMovieEvent(LoadNewMovieEvent event, Emitter emit) async {
     Future.delayed(const Duration(seconds: 2));
@@ -58,29 +71,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  _onLoadCommomMovieEvent(LoadCommomMovieEvent event, Emitter emit) async {
-    // Future.delayed(const Duration(seconds: 2));
-    // emit(HomeMovieInitial());
+  _onLoadSingleMovieEvent(LoadSingleMovieEvent event, Emitter emit) async {
+    final result = await _useCase.executeSingleMovie(event.limit, 1);
 
-    final result =
-        await _useCase.executeSingleMovie(event.limit).whenComplete(() async {
-      add(
-        LoadSeriesMovieEvent(10),
-      );
-      add(
-        LoadCartoonEvent(10),
-      );
-    });
     result.fold((err) {
       emit(HomeLoadErr());
       return left(err);
     }, (data) {
-      _listSingle = data.data!.items ?? [];
+      listSingle = data.data!.items ?? [];
       emit(
         HomeLoadSuccess(
           listItems: _listNewMovie,
           listSingleMovie: data.data!.items,
           listCartoon: _listCarton,
+          listSeriesMovie: _listSeries,
         ),
       );
       return right(data);
@@ -88,7 +92,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   _onLoadSeriesMovieEvent(LoadSeriesMovieEvent event, Emitter emit) async {
-    final result = await _useCase.executeSeriesMovie(event.limit);
+    final result = await _useCase.executeSeriesMovie(event.limit, 1);
     result.fold(
       (err) {
         emit(HomeLoadErr());
@@ -99,7 +103,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           HomeLoadSuccess(
             listItems: _listNewMovie,
-            listSingleMovie: _listSingle,
+            listSingleMovie: listSingle,
             listCartoon: _listCarton,
             listSeriesMovie: data.data!.items,
           ),
@@ -110,17 +114,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   _onLoadCartoonEvent(LoadCartoonEvent event, Emitter emit) async {
-    final result = await _useCase.executeCartoon(event.limit);
+    final result = await _useCase.executeCartoon(event.limit, 1);
     result.fold(
       (err) {
         emit(HomeLoadErr());
         return left(err);
       },
       (data) {
+        _listCarton = data.data?.items ?? [];
         emit(
           HomeLoadSuccess(
             listItems: _listNewMovie,
-            listSingleMovie: _listSingle,
+            listSingleMovie: listSingle,
             listSeriesMovie: _listSeries,
             listCartoon: data.data?.items,
           ),

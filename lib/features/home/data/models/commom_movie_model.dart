@@ -3,7 +3,7 @@ import 'package:movie_app/features/home/domain/entities/commom_movie_entity.dart
 class CommomMovieModel extends CommomMovieEntity {
   String? status;
   String? msg;
-  DataSingle? data;
+  CommomData? data;
 
   CommomMovieModel({
     this.status,
@@ -14,7 +14,7 @@ class CommomMovieModel extends CommomMovieEntity {
   CommomMovieModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     msg = json['msg'];
-    data = json['data'] != null ? new DataSingle.fromJson(json['data']) : null;
+    data = json['data'] != null ? new CommomData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -28,17 +28,17 @@ class CommomMovieModel extends CommomMovieEntity {
   }
 }
 
-class DataSingle {
+class CommomData {
   SeoOnPage? seoOnPage;
   List<BreadCrumb>? breadCrumb;
   String? titlePage;
-  List<DataSingleItems>? items;
+  List<DataItems>? items;
   Params? params;
   String? typeList;
   String? aPPDOMAINFRONTEND;
   String? aPPDOMAINCDNIMAGE;
 
-  DataSingle(
+  CommomData(
       {this.seoOnPage,
       this.breadCrumb,
       this.titlePage,
@@ -48,7 +48,7 @@ class DataSingle {
       this.aPPDOMAINFRONTEND,
       this.aPPDOMAINCDNIMAGE});
 
-  DataSingle.fromJson(Map<String, dynamic> json) {
+  CommomData.fromJson(Map<String, dynamic> json) {
     seoOnPage = json['seoOnPage'] != null
         ? new SeoOnPage.fromJson(json['seoOnPage'])
         : null;
@@ -60,9 +60,9 @@ class DataSingle {
     }
     titlePage = json['titlePage'];
     if (json['items'] != null) {
-      items = <DataSingleItems>[];
+      items = <DataItems>[];
       json['items'].forEach((v) {
-        items!.add(new DataSingleItems.fromJson(v));
+        items!.add(new DataItems.fromJson(v));
       });
     }
     params =
@@ -152,7 +152,7 @@ class BreadCrumb {
   }
 }
 
-class DataSingleItems {
+class DataItems {
   Modified? modified;
   String? sId;
   String? name;
@@ -170,7 +170,7 @@ class DataSingleItems {
   int? year;
   List<Category>? category;
 
-  DataSingleItems({
+  DataItems({
     this.modified,
     this.sId,
     this.name,
@@ -189,7 +189,7 @@ class DataSingleItems {
     this.category,
   });
 
-  DataSingleItems.fromJson(Map<String, dynamic> json) {
+  DataItems.fromJson(Map<String, dynamic> json) {
     modified = json['modified'] != null
         ? new Modified.fromJson(json['modified'])
         : null;
